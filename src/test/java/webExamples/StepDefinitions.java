@@ -19,6 +19,12 @@ public class StepDefinitions {
 		webCommon.open(url);
 	}
 
+	@前提("^Alert Test Pageページを開く$")
+	public void openAlertTestPage() throws InterruptedException {
+		String url = "http://the-internet.herokuapp.com/javascript_alerts";
+		webCommon.open(url);
+	}
+
 	@もし("^ブラウザを閉じる$")
 	public void closeExamplePage() {
 		webCommon.close();
@@ -39,6 +45,11 @@ public class StepDefinitions {
 			selector = "textarea";
 		}
 		webCommon.inputAndWaitName(selector, text);
+	}
+
+	@もし("^ポップアップ画面のプロンプトに\"([^\"]*)\"と入力する$")
+	public void inputPopup(String text) throws InterruptedException {
+		webCommon.popUpInputBox(text);
 	}
 
 	@もし("^\"([^\"]*)\"にチェックを入れる$")
@@ -83,13 +94,31 @@ public class StepDefinitions {
 		switch(button) {
 		case("Show Message"):
 			selector = "btn";
+			webCommon.btnClickAndWait_ID(selector);
 			break;
 		case("Submit"):
 			selector = "submitbtn";
+			webCommon.btnClickAndWait_ID(selector);
+			break;
+		case("Alert"):
+			selector = "//button[@onclick='jsAlert()']";
+			webCommon.btnClickAndWait_X(selector);
+			break;
+		case("Confirm"):
+			selector = "//button[@onclick='jsConfirm()']";
+			webCommon.btnClickAndWait_X(selector);
+			break;
+		case("Prompt"):
+			selector = "//button[@onclick='jsPrompt()']";
+			webCommon.btnClickAndWait_X(selector);
 			break;
 		default:
 		}
-		webCommon.btnClickAndWait_ID(selector);
+	}
+
+	@もし("^ポッフアップの\"([^\"]*)\"ボタンを押す$")
+	public void popUpButton(String button) {
+		webCommon.btnClickOK(button);
 	}
 
     @もし("^\"([^\"]*)\"秒待つ$")
@@ -105,8 +134,22 @@ public class StepDefinitions {
     public void iammessage(String message) throws InterruptedException {
     	String selector;
 
-    	selector = "button-message";
-    	assertTrue(webCommon.testTextID(selector, message));
+    	switch(message) {
+    	case("I am the message!!"):
+        	selector = "button-message";
+        	assertTrue(webCommon.testTextID(selector, message));
+    		break;
+    	case("You successfully clicked an alert"):
+    		selector = "result";
+    		assertTrue(webCommon.testTextID(selector, message));
+    		break;
+    	case("You clicked: Ok"):
+    		selector = "result";
+    		assertTrue(webCommon.testTextID(selector, message));
+    		break;
+    	case("You clicked: Cancel"):
+    		break;
+    	}
     }
 
 	@ならば("^画面の\"([^\"]*)\"に\"([^\"]*)\"と表示される$")
@@ -132,5 +175,10 @@ public class StepDefinitions {
 		default:
 		}
 		assertTrue(webCommon.testTextX(selector, text));
+	}
+
+	@ならば("^ポップアップ画面に\"([^\"]*)\"と表示される$")
+	public void testPopUpMessage(String text) throws InterruptedException {
+		assertTrue(webCommon.isPopUpPresent(text));
 	}
 }

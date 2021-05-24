@@ -17,6 +17,9 @@ public class webTestCommon {
     public static WebDriver webDriver;
     public static WebDriverWait wait;
 
+    private boolean acceptNextAlert = true;
+    public String alertPrompt = null;
+
 	public void open(String url) throws InterruptedException {
 		System.setProperty("webdriver.chrome.driver", "C:\\WebDrivers\\chromedriver_win32\\chromedriver.exe");
 		webDriver = new ChromeDriver();
@@ -101,6 +104,14 @@ public class webTestCommon {
 	}
 
 /**
+ * マウス移動操作
+ */
+	public void moveByOffset(int xOffset, int yOffset) {
+		Actions actionProvider = new Actions(webDriver);
+		actionProvider.moveByOffset(xOffset, yOffset).build().perform();
+	}
+
+/**
  * ボタンクリック操作
  */
     /*
@@ -143,6 +154,23 @@ public class webTestCommon {
 
     }
 
+    /**
+     * ポッフアップ画面操作
+     */
+    public void btnClickOK(String button) {
+        Alert alert = webDriver.switchTo().alert();
+
+    	switch(button) {
+    	case("OK"):
+    		alert.accept();
+    		break;
+    	case("CANCEL"):
+    		alert.dismiss();
+    		break;
+    	default:
+    	}
+    }
+
 /**
  * 入力系
  *
@@ -176,6 +204,12 @@ public class webTestCommon {
         element.clear();
         Thread.sleep(500);
         element.sendKeys(text);
+    }
+
+    public void popUpInputBox(String text) throws InterruptedException {
+    	Alert alert = webDriver.switchTo().alert();
+    	alert.sendKeys(text);
+    	Thread.sleep(500);
     }
 
     /**
@@ -264,4 +298,16 @@ public class webTestCommon {
 
     	return res;
     }
+
+    /**
+     * ポッフアップ画面の検証
+     */
+	public boolean isPopUpPresent(String text) throws InterruptedException {
+        Alert alert = webDriver.switchTo().alert();
+        String alertText = alert.getText();
+
+        boolean res = alertText.contains(text);
+        return res;
+	}
+
 }
