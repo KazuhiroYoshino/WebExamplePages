@@ -16,6 +16,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class webTestCommon {
     public static WebDriver webDriver;
     public static WebDriverWait wait;
+    public int moveX;
+    public int moveY;
 
     private boolean acceptNextAlert = true;
     public String alertPrompt = null;
@@ -111,6 +113,25 @@ public class webTestCommon {
 		actionProvider.moveByOffset(xOffset, yOffset).build().perform();
 	}
 
+	/**
+	 * センターに移動
+	 */
+	public void moveCenter() {
+		Actions action = new Actions(webDriver);
+		action.moveToElement(webDriver.findElement(By.xpath("//body")))
+		.click()
+		.build()
+		.perform();
+//		new Actions(webDriver).moveToElement(findElement(By.xpath("//body")).click().build().perform();
+	}
+
+	/**
+	 *
+	 */
+	public void getWinSize() {
+		moveX = (webDriver.manage().window().getSize().getWidth()) / 2;
+		moveY = (webDriver.manage().window().getSize().getHeight()) / 2;
+	}
 /**
  * ボタンクリック操作
  */
@@ -131,6 +152,18 @@ public class webTestCommon {
 
     public void btnClickAndWait_X(String selector) throws InterruptedException {
 		WebElement element = webDriver.findElement(By.xpath(selector));
+		Actions actions = new Actions(webDriver);
+		actions.moveToElement(element);
+		actions.perform();
+		Thread.sleep(500);
+		wait.until(ExpectedConditions.elementToBeClickable(element));
+		element.click();
+
+		Thread.sleep(1000);
+    }
+
+    public void btnClickAndWait_CSS(String selector) throws InterruptedException {
+		WebElement element = webDriver.findElement(By.cssSelector(selector));
 		Actions actions = new Actions(webDriver);
 		actions.moveToElement(element);
 		actions.perform();
